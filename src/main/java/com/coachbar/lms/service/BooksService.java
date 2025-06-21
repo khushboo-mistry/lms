@@ -15,4 +15,5 @@ public interface BooksService {
 	
 	void deleteBook(Books book);
 
+	Optional<Books> getBookByBookCode(String bookCode);
 }

@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.coachbar.lms.model.Books;
+import com.coachbar.lms.model.Lendings;
 
 @Repository
-public interface BooksRepository extends JpaRepository<Books, Long>{
+public interface LendingsRepository extends JpaRepository<Lendings, Long> {
 
-	Optional<Books> findByCode(String bookCode);
+	Optional<Lendings> findByIssueCode(String issueCode);
 
 }

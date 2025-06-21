@@ -49,6 +49,9 @@ public class Lendings extends BaseDomainObject implements Serializable {
 
 	@Column(name = "FINE_AMOUNT")
 	private Double fineAmount = 0.0;
+	
+	@Column(name = "ISSUE_CODE")
+	private String issueCode;
 
 	public Books getBook() {
 		return book;
@@ -104,6 +107,14 @@ public class Lendings extends BaseDomainObject implements Serializable {
 
 	public void setFineAmount(Double fineAmount) {
 		this.fineAmount = fineAmount;
+	}
+
+	public String getIssueCode() {
+		return issueCode;
+	}
+
+	public void setIssueCode(String issueCode) {
+		this.issueCode = issueCode;
 	}
 
 }

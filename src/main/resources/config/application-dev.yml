@@ -6,6 +6,11 @@ security:
       jwt:
         key-value: key123#@
 spring:
+  security:
+    user: 
+      name: khushboo
+      password: coachbar123
+      role: USER
   mvc:
     view:
       prefix: /WEB-INF/jsp/

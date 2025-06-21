@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coachbar.lms.dto.BooksDto;
@@ -25,10 +24,9 @@ import com.coachbar.lms.dto.ResponseStatusCode;
 import com.coachbar.lms.mapper.BooksToBooksDtoMapper;
 import com.coachbar.lms.model.Books;
 import com.coachbar.lms.service.BooksService;
+import com.coachbar.lms.util.CodeGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
@@ -43,8 +41,6 @@ public class BooksController {
 
 	@ApiOperation(value = "Get All Books List", notes = "To Fetch All the Books List with all details in a go.")
 	@GetMapping("/books")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
 	public ResponseEntity<?> getBooks(HttpServletRequest request) throws JsonProcessingException {
 		List<BooksDto> booksList = new ArrayList<BooksDto>();
 		try {
@@ -61,15 +57,13 @@ public class BooksController {
 	}
 
 	@ApiOperation(value = "Get Book", notes = "To Fetch All the Books List with all details in a go.")
-	@GetMapping("/books/{id}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
+	@GetMapping("/books/{bookcode}")
 	public ResponseEntity<?> getBook(HttpServletRequest request,
-			@PathVariable @Valid @ApiParam(value = "Book Id", required = true) Long id) throws JsonProcessingException {
+			@PathVariable @Valid @ApiParam(value = "Book Code", required = true) String bookcode) throws JsonProcessingException {
 		BooksDto book = null;
 		try {
 
-			Optional<Books> entity = booksService.getBook(id);
+			Optional<Books> entity = booksService.getBookByBookCode(bookcode);
 			if (entity.isPresent()) {
 				book = booksToBooksDtoMapper.toDto(entity.get());
 				return ResponseEntity.status(HttpStatus.OK)
@@ -85,14 +79,13 @@ public class BooksController {
 
 	@ApiOperation(value = "Post Book", notes = "To add book a book to records.")
 	@PostMapping("/books")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
-	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> postBook(HttpServletRequest request,
 			@RequestBody @Valid @ApiParam(value = "Books Dto", required = true) BooksDto bookDto)
 			throws JsonProcessingException {
 		try {
-			booksService.saveBook(booksToBooksDtoMapper.toEntity(bookDto));
+			Books book = booksToBooksDtoMapper.toEntity(bookDto);
+			book.setCode(CodeGenerator.generateCode());
+			booksService.saveBook(book);
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(ResponseGenerator.getResponse(bookDto, ResponseStatusCode.S_1001));
 
@@ -102,17 +95,15 @@ public class BooksController {
 	}
 
 	@ApiOperation(value = "Update Book", notes = "To update the book data in records.")
-	@PutMapping("/books/{id}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
+	@PutMapping("/books/{bookcode}")
 	public ResponseEntity<?> putBook(HttpServletRequest request,
-			@PathVariable @Valid @ApiParam(value = "Book Id", required = true) Long id,
+			@PathVariable @Valid @ApiParam(value = "Book Code", required = true) String bookcode,
 			@RequestBody @Valid @ApiParam(value = "Book Dto", required = true) BooksDto bookDto)
 			throws JsonProcessingException {
 		BooksDto book = null;
 		try {
 
-			Optional<Books> entity = booksService.getBook(id);
+			Optional<Books> entity = booksService.getBookByBookCode(bookcode);
 			if (entity.isPresent()) {
 				Books bookToUpdate = booksToBooksDtoMapper.toEntity(bookDto);
 				bookToUpdate.setId(entity.get().getId());
@@ -129,14 +120,12 @@ public class BooksController {
 	}
 
 	@ApiOperation(value = "Delete Book", notes = "To delete the book from records.")
-	@DeleteMapping("/books/{id}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
+	@DeleteMapping("/books/{bookcode}")
 	public ResponseEntity<?> deleteBook(HttpServletRequest request,
-			@PathVariable @Valid @ApiParam(value = "Book Id", required = true) Long id) throws JsonProcessingException {
+			@PathVariable @Valid @ApiParam(value = "Book Code", required = true) String bookcode) throws JsonProcessingException {
 		try {
 
-			Optional<Books> entity = booksService.getBook(id);
+			Optional<Books> entity = booksService.getBookByBookCode(bookcode);
 			if (entity.isPresent()) {
 				booksService.deleteBook(entity.get());
 				return ResponseEntity.status(HttpStatus.CREATED)

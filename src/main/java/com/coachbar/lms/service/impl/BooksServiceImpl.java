@@ -35,4 +35,9 @@ public class BooksServiceImpl implements BooksService {
 	public void deleteBook(Books book) {
 		booksRepository.delete(book);
 	}
+
+	@Override
+	public Optional<Books> getBookByBookCode(String bookCode) {
+		return booksRepository.findByCode(bookCode);
+	}
 }

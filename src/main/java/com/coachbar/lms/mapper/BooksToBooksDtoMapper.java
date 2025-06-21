@@ -9,6 +9,7 @@ import com.coachbar.lms.model.Books;
 public interface BooksToBooksDtoMapper {
 
 	Books toEntity(BooksDto dto);
-	
+
 	BooksDto toDto(Books entity);
+
 }
