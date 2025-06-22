@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.coachbar.lms.dto.BooksDto;
 import com.coachbar.lms.dto.LendingsDto;
+import com.coachbar.lms.dto.Response;
 import com.coachbar.lms.dto.ResponseGenerator;
 import com.coachbar.lms.dto.ResponseStatusCode;
 import com.coachbar.lms.enumeration.LendingStatus;
@@ -47,7 +48,7 @@ public class BooksIssueController {
 
 	@ApiOperation(value = "Issue Book", notes = "To issue book to user.")
 	@PostMapping("/issues/{userCode}/{bookCode}")
-	public ResponseEntity<?> issueBook(HttpServletRequest request,
+	public ResponseEntity<Response<LendingsDto>> issueBook(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "User Code", required = true) String userCode,
 			@PathVariable @Valid @ApiParam(value = "Book Code", required = true) String bookCode)
 			throws JsonProcessingException {
@@ -56,12 +57,12 @@ public class BooksIssueController {
 			Optional<Users> user = usersService.getUserByUserCode(userCode);
 			if (!user.isPresent()) {
 				return ResponseEntity.status(HttpStatus.OK)
-						.body(ResponseGenerator.getResponse(user, ResponseStatusCode.CE_2002));
+						.body(ResponseGenerator.getResponse(null, ResponseStatusCode.CE_2002));
 			}
 			Optional<Books> book = booksService.getBookByBookCode(bookCode);
 			if (!book.isPresent()) {
 				return ResponseEntity.status(HttpStatus.OK)
-						.body(ResponseGenerator.getResponse(book, ResponseStatusCode.CE_2001));
+						.body(ResponseGenerator.getResponse(null, ResponseStatusCode.CE_2001));
 			}
 
 			Date issueDate = new Date();
@@ -100,7 +101,7 @@ public class BooksIssueController {
 
 	@ApiOperation(value = "Return Book", notes = "To initiate return for a book issued in record.")
 	@PostMapping("/issues/{issueCode}/return")
-	public ResponseEntity<?> returnBook(HttpServletRequest request,
+	public ResponseEntity<Response<LendingsDto>> returnBook(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "Issue Code", required = true) String issueCode)
 			throws JsonProcessingException {
 		try {
@@ -138,10 +139,9 @@ public class BooksIssueController {
 
 	@ApiOperation(value = "Calculate fine", notes = "To initiate return for a book issued in record.")
 	@PostMapping("/issues/{issueCode}/fine")
-	public ResponseEntity<?> calculateFineOnIssuedBook(HttpServletRequest request,
+	public ResponseEntity<Response<LendingsDto>> calculateFineOnIssuedBook(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "Issue Code", required = true) String issueCode)
 			throws JsonProcessingException {
-		BooksDto book = null;
 		try {
 
 			Optional<Lendings> lending = lendingsService.findByIssueCode(issueCode);

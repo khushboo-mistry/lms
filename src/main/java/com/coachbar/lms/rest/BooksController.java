@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coachbar.lms.dto.BooksDto;
+import com.coachbar.lms.dto.Response;
 import com.coachbar.lms.dto.ResponseGenerator;
 import com.coachbar.lms.dto.ResponseStatusCode;
 import com.coachbar.lms.mapper.BooksToBooksDtoMapper;
@@ -41,7 +42,7 @@ public class BooksController {
 
 	@ApiOperation(value = "Get All Books List", notes = "To Fetch All the Books List with all details in a go.")
 	@GetMapping("/books")
-	public ResponseEntity<?> getBooks(HttpServletRequest request) throws JsonProcessingException {
+	public ResponseEntity<Response<List<BooksDto>>> getBooks(HttpServletRequest request) throws JsonProcessingException {
 		List<BooksDto> booksList = new ArrayList<BooksDto>();
 		try {
 
@@ -58,7 +59,7 @@ public class BooksController {
 
 	@ApiOperation(value = "Get Book", notes = "To Fetch All the Books List with all details in a go.")
 	@GetMapping("/books/{bookcode}")
-	public ResponseEntity<?> getBook(HttpServletRequest request,
+	public ResponseEntity<Response<BooksDto>> getBook(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "Book Code", required = true) String bookcode) throws JsonProcessingException {
 		BooksDto book = null;
 		try {
@@ -79,7 +80,7 @@ public class BooksController {
 
 	@ApiOperation(value = "Post Book", notes = "To add book a book to records.")
 	@PostMapping("/books")
-	public ResponseEntity<?> postBook(HttpServletRequest request,
+	public ResponseEntity<Response<BooksDto>> postBook(HttpServletRequest request,
 			@RequestBody @Valid @ApiParam(value = "Books Dto", required = true) BooksDto bookDto)
 			throws JsonProcessingException {
 		try {
@@ -96,7 +97,7 @@ public class BooksController {
 
 	@ApiOperation(value = "Update Book", notes = "To update the book data in records.")
 	@PutMapping("/books/{bookcode}")
-	public ResponseEntity<?> putBook(HttpServletRequest request,
+	public ResponseEntity<Response<BooksDto>> putBook(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "Book Code", required = true) String bookcode,
 			@RequestBody @Valid @ApiParam(value = "Book Dto", required = true) BooksDto bookDto)
 			throws JsonProcessingException {
@@ -121,7 +122,7 @@ public class BooksController {
 
 	@ApiOperation(value = "Delete Book", notes = "To delete the book from records.")
 	@DeleteMapping("/books/{bookcode}")
-	public ResponseEntity<?> deleteBook(HttpServletRequest request,
+	public ResponseEntity<Response<Boolean>> deleteBook(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "Book Code", required = true) String bookcode) throws JsonProcessingException {
 		try {
 

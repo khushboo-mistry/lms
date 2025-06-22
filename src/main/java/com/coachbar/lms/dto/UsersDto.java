@@ -2,18 +2,28 @@ package com.coachbar.lms.dto;
 
 import java.util.Date;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Users", description = "User Information")
 public class UsersDto {
 
+	@ApiModelProperty(value = "Name", required = true, example = "Khushboo")
 	private String name;
 
+	@ApiModelProperty(value = "Surname", required = true, example = "Mistry")
 	private String surname;
 
+	@ApiModelProperty(value = "Address", required = true, example = "OP Road, Baroda, 390020")
 	private String address;
 
+	@ApiModelProperty(value = "Contact Number/Phone Number", required = true, example = "9876543210")
 	private Date contactNumber;
 
+	@ApiModelProperty(value = "Activation Status", required = true, example = "true")
 	private boolean isActive;
 
+	@ApiModelProperty(value = "User code", required = true, example = "KEHYBEHDTQ")
 	private String userCode;
 
 	public String getName() {

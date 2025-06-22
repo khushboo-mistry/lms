@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.coachbar.lms.dto.Response;
 import com.coachbar.lms.dto.ResponseGenerator;
 import com.coachbar.lms.dto.ResponseStatusCode;
 import com.coachbar.lms.dto.UsersDto;
@@ -44,7 +45,7 @@ public class UserController {
 
 	@ApiOperation(value = "Get All Users List", notes = "To Fetch All the users.")
 	@GetMapping("/users")
-	public ResponseEntity<?> getUsers(HttpServletRequest request) throws JsonProcessingException {
+	public ResponseEntity<Response<List<UsersDto>>> getUsers(HttpServletRequest request) throws JsonProcessingException {
 		List<UsersDto> usersList = new ArrayList<UsersDto>();
 		try {
 
@@ -64,7 +65,7 @@ public class UserController {
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
 	@ResponseStatus(HttpStatus.ACCEPTED)
-	public ResponseEntity<?> getUser(HttpServletRequest request,
+	public ResponseEntity<Response<UsersDto>> getUser(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "User Code", required = true) String userCode) throws JsonProcessingException {
 		UsersDto user = null;
 		try {
@@ -87,7 +88,7 @@ public class UserController {
 	@PostMapping("/users")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
-	public ResponseEntity<?> postUser(HttpServletRequest request,
+	public ResponseEntity<Response<UsersDto>> postUser(HttpServletRequest request,
 			@RequestBody @Valid @ApiParam(value = "User Dto", required = true) UsersDto userDto)
 			throws JsonProcessingException {
 		try {
@@ -106,7 +107,7 @@ public class UserController {
 	@PutMapping("/users/{userCode}")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
-	public ResponseEntity<?> putUser(HttpServletRequest request,
+	public ResponseEntity<Response<UsersDto>> putUser(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "User Code", required = true) String userCode,
 			@RequestBody @Valid @ApiParam(value = "User Dto", required = true) UsersDto userDto)
 			throws JsonProcessingException {
@@ -133,7 +134,7 @@ public class UserController {
 	@DeleteMapping("/users/{userCode}")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
-	public ResponseEntity<?> deleteUser(HttpServletRequest request,
+	public ResponseEntity<Response<Boolean>> deleteUser(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "User Code", required = true) String userCode) throws JsonProcessingException {
 		try {
 
