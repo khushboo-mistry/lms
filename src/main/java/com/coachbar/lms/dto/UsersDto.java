@@ -2,6 +2,8 @@ package com.coachbar.lms.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -23,7 +25,7 @@ public class UsersDto {
 	@ApiModelProperty(value = "Activation Status", required = true, example = "true")
 	private boolean isActive;
 
-	@ApiModelProperty(value = "User code", required = true, example = "KEHYBEHDTQ")
+	@ApiModelProperty(value = "User code", example = "KEHYBEHDTQ")
 	private String userCode;
 
 	public String getName() {
@@ -73,5 +75,9 @@ public class UsersDto {
 	public void setUserCode(String userCode) {
 		this.userCode = userCode;
 	}
+
+	
+
+	
 
 }

@@ -51,7 +51,6 @@ public class BooksDto {
 	private String language;
 	
 	@ApiModelProperty(value = "Code", example = "KEHYBEHDTQ")
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	private String code;
 
 	public String getTitle() {
@@ -156,6 +155,14 @@ public class BooksDto {
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 }

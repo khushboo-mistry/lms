@@ -33,6 +33,9 @@ public class LendingsDto {
 	@ApiModelProperty(value = "Name", required = true, example = "0")
 	private String fineAmount;
 
+	@ApiModelProperty(value = "Issue Code", example = "KEHYBEHDTQ")
+	private String issueCode;
+	
 	public String getBookName() {
 		return bookName;
 	}
@@ -73,6 +76,14 @@ public class LendingsDto {
 		this.issuedDate = issuedDate;
 	}
 
+	public String getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(String dueDate) {
+		this.dueDate = dueDate;
+	}
+
 	public String getReturnDate() {
 		return returnDate;
 	}
@@ -89,20 +100,20 @@ public class LendingsDto {
 		this.fineChargerPerDay = fineChargerPerDay;
 	}
 
-	public String getDueDate() {
-		return dueDate;
-	}
-
-	public void setDueDate(String dueDate) {
-		this.dueDate = dueDate;
-	}
-
 	public String getFineAmount() {
 		return fineAmount;
 	}
 
 	public void setFineAmount(String fineAmount) {
 		this.fineAmount = fineAmount;
+	}
+
+	public String getIssueCode() {
+		return issueCode;
+	}
+
+	public void setIssueCode(String issueCode) {
+		this.issueCode = issueCode;
 	}
 
 }

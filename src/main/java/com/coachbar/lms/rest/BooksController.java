@@ -88,7 +88,7 @@ public class BooksController {
 			book.setCode(CodeGenerator.generateCode());
 			booksService.saveBook(book);
 			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(ResponseGenerator.getResponse(bookDto, ResponseStatusCode.S_1001));
+					.body(ResponseGenerator.getResponse(booksToBooksDtoMapper.toDto(book), ResponseStatusCode.S_1001));
 
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseGenerator.handleException(e));
@@ -108,9 +108,10 @@ public class BooksController {
 			if (entity.isPresent()) {
 				Books bookToUpdate = booksToBooksDtoMapper.toEntity(bookDto);
 				bookToUpdate.setId(entity.get().getId());
+				bookToUpdate.setCode(entity.get().getCode());
 				booksService.saveBook(bookToUpdate);
-				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(ResponseGenerator.getResponse(bookDto, ResponseStatusCode.S_1002));
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseGenerator.getResponse(booksToBooksDtoMapper.toDto(bookToUpdate), ResponseStatusCode.S_1002));
 			}
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseGenerator.getResponse(book, ResponseStatusCode.CE_2001));
@@ -129,7 +130,7 @@ public class BooksController {
 			Optional<Books> entity = booksService.getBookByBookCode(bookcode);
 			if (entity.isPresent()) {
 				booksService.deleteBook(entity.get());
-				return ResponseEntity.status(HttpStatus.CREATED)
+				return ResponseEntity.status(HttpStatus.OK)
 						.body(ResponseGenerator.getResponse(true, ResponseStatusCode.S_1003));
 			}
 			return ResponseEntity.status(HttpStatus.OK)

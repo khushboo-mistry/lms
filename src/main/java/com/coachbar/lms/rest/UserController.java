@@ -62,9 +62,6 @@ public class UserController {
 
 	@ApiOperation(value = "Get User", notes = "To the User data from records.")
 	@GetMapping("/users/{userCode}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
-	@ResponseStatus(HttpStatus.ACCEPTED)
 	public ResponseEntity<Response<UsersDto>> getUser(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "User Code", required = true) String userCode) throws JsonProcessingException {
 		UsersDto user = null;
@@ -86,8 +83,6 @@ public class UserController {
 
 	@ApiOperation(value = "Post User", notes = "To add a user to records.")
 	@PostMapping("/users")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
 	public ResponseEntity<Response<UsersDto>> postUser(HttpServletRequest request,
 			@RequestBody @Valid @ApiParam(value = "User Dto", required = true) UsersDto userDto)
 			throws JsonProcessingException {
@@ -96,7 +91,7 @@ public class UserController {
 			user.setUserCode(CodeGenerator.generateCode());
 			usersService.saveUser(user);
 			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(ResponseGenerator.getResponse(userDto, ResponseStatusCode.S_1005));
+					.body(ResponseGenerator.getResponse(usersToUsersDtoMapper.toDto(user), ResponseStatusCode.S_1005));
 
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseGenerator.handleException(e));
@@ -105,8 +100,6 @@ public class UserController {
 
 	@ApiOperation(value = "Update User", notes = "To update the user data in records.")
 	@PutMapping("/users/{userCode}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
 	public ResponseEntity<Response<UsersDto>> putUser(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "User Code", required = true) String userCode,
 			@RequestBody @Valid @ApiParam(value = "User Dto", required = true) UsersDto userDto)
@@ -118,9 +111,10 @@ public class UserController {
 			if (entity.isPresent()) {
 				Users userToUpdate = usersToUsersDtoMapper.toEntity(userDto);
 				userToUpdate.setId(entity.get().getId());
+				userToUpdate.setUserCode(entity.get().getUserCode());
 				usersService.saveUser(userToUpdate);
-				return ResponseEntity.status(HttpStatus.CREATED)
-						.body(ResponseGenerator.getResponse(userDto, ResponseStatusCode.S_1006));
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseGenerator.getResponse(usersToUsersDtoMapper.toDto(userToUpdate), ResponseStatusCode.S_1006));
 			}
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseGenerator.getResponse(book, ResponseStatusCode.CE_2001));
@@ -132,8 +126,6 @@ public class UserController {
 
 	@ApiOperation(value = "Delete User", notes = "To delete the user from records.")
 	@DeleteMapping("/users/{userCode}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "x-api-key", value = "Example: A0FD5C94164A5EB7A4224ACCB46EB4B5", paramType = "header", required = true) })
 	public ResponseEntity<Response<Boolean>> deleteUser(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "User Code", required = true) String userCode) throws JsonProcessingException {
 		try {
@@ -141,7 +133,7 @@ public class UserController {
 			Optional<Users> entity = usersService.getUserByUserCode(userCode);
 			if (entity.isPresent()) {
 				usersService.deleteUser(entity.get());
-				return ResponseEntity.status(HttpStatus.CREATED)
+				return ResponseEntity.status(HttpStatus.OK)
 						.body(ResponseGenerator.getResponse(true, ResponseStatusCode.S_1007));
 			}
 			return ResponseEntity.status(HttpStatus.OK)

@@ -68,7 +68,7 @@ public class BooksIssueController {
 			Date issueDate = new Date();
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(issueDate);
-			calendar.add(Calendar.MONTH, 2);
+			calendar.add(Calendar.MONTH, 1);
 			Date dueDate = calendar.getTime();
 
 			Lendings lendings = new Lendings();
@@ -79,7 +79,7 @@ public class BooksIssueController {
 			lendings.setStatus(LendingStatus.ISSUED);
 			lendings.setDueDate(dueDate);
 			lendings = lendingsService.saveOrUpdateIssueEntry(lendings);
-
+			
 			LendingsDto lendingsDto = new LendingsDto();
 			lendingsDto.setBookCode(bookCode);
 			lendingsDto.setBookName(book.get().getTitle());
@@ -90,6 +90,7 @@ public class BooksIssueController {
 			lendingsDto.setFineAmount("-");
 			lendingsDto.setUserCode(userCode);
 			lendingsDto.setUserName(user.get().getName() + " " + user.get().getSurname());
+			lendingsDto.setIssueCode(lendings.getIssueCode());
 
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseGenerator.getResponse(lendingsDto, ResponseStatusCode.S_1008));
@@ -119,7 +120,8 @@ public class BooksIssueController {
 			Lendings lendings = lending.get();
 			lendings.setReturnDate(new Date());
 			lendings.setStatus(LendingStatus.RETURNED);
-
+			lendings = lendingsService.saveOrUpdateIssueEntry(lendings);
+			
 			LendingsDto lendingsDto = new LendingsDto();
 			lendingsDto.setBookCode(lendings.getBook().getCode());
 			lendingsDto.setBookName(lendings.getBook().getTitle());
@@ -128,6 +130,7 @@ public class BooksIssueController {
 			lendingsDto.setReturnDate(lendings.getReturnDate().toString());
 			lendingsDto.setUserCode(lendings.getUser().getUserCode());
 			lendingsDto.setUserName(lendings.getUser().getName() + " " + lendings.getUser().getSurname());
+			lendingsDto.setIssueCode(lendings.getIssueCode());
 
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseGenerator.getResponse(lendingsDto, ResponseStatusCode.S_1009));
@@ -137,7 +140,7 @@ public class BooksIssueController {
 		}
 	}
 
-	@ApiOperation(value = "Calculate fine", notes = "To initiate return for a book issued in record.")
+	@ApiOperation(value = "Calculate fine", notes = "To Calculate fine for a book issued in record.")
 	@PostMapping("/issues/{issueCode}/fine")
 	public ResponseEntity<Response<LendingsDto>> calculateFineOnIssuedBook(HttpServletRequest request,
 			@PathVariable @Valid @ApiParam(value = "Issue Code", required = true) String issueCode)
@@ -163,6 +166,7 @@ public class BooksIssueController {
 			lendings.setFineAmount(fineAmount);
 			lendings.setReturnDate(returnDate);
 			lendings.setStatus(LendingStatus.OVERDUE);
+			lendings = lendingsService.saveOrUpdateIssueEntry(lendings);
 
 			LendingsDto lendingsDto = new LendingsDto();
 			lendingsDto.setBookCode(lendings.getBook().getCode());
@@ -174,6 +178,45 @@ public class BooksIssueController {
 			lendingsDto.setReturnDate(returnDate.toString());
 			lendingsDto.setUserCode(lendings.getUser().getUserCode());
 			lendingsDto.setUserName(lendings.getUser().getName() + " " + lendings.getUser().getSurname());
+			lendingsDto.setIssueCode(lendings.getIssueCode());
+
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(ResponseGenerator.getResponse(lendingsDto, ResponseStatusCode.S_1010));
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseGenerator.handleException(e));
+		}
+	}
+	
+	@ApiOperation(value = "Pay fine", notes = "To initiate return with fine for a book issued in record.")
+	@PostMapping("/issues/{issueCode}/fine/pay")
+	public ResponseEntity<Response<LendingsDto>> payFineOnIssuedBook(HttpServletRequest request,
+			@PathVariable @Valid @ApiParam(value = "Issue Code", required = true) String issueCode)
+			throws JsonProcessingException {
+		try {
+
+			Optional<Lendings> lending = lendingsService.findByIssueCode(issueCode);
+			if (!lending.isPresent()) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(ResponseGenerator.getResponse(null, ResponseStatusCode.CE_2003));
+			}
+
+			Lendings lendings = lending.get();
+			lendings.setReturnDate(new Date());
+			lendings.setStatus(LendingStatus.RETURNED);
+			lendings = lendingsService.saveOrUpdateIssueEntry(lendings);
+
+			LendingsDto lendingsDto = new LendingsDto();
+			lendingsDto.setBookCode(lendings.getBook().getCode());
+			lendingsDto.setBookName(lendings.getBook().getTitle());
+			lendingsDto.setFineChargerPerDay(FINE_AMOUNT);
+			lendingsDto.setFineAmount(lendings.getFineAmount().toString());
+			lendingsDto.setIssuedDate(lendings.getIssueDate().toString());
+			lendingsDto.setDueDate(lendings.getDueDate().toString());
+			lendingsDto.setReturnDate(lendings.getReturnDate().toString());
+			lendingsDto.setUserCode(lendings.getUser().getUserCode());
+			lendingsDto.setUserName(lendings.getUser().getName() + " " + lendings.getUser().getSurname());
+			lendingsDto.setIssueCode(lendings.getIssueCode());
 
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(ResponseGenerator.getResponse(lendingsDto, ResponseStatusCode.S_1010));
