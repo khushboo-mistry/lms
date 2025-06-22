@@ -1,12 +1,12 @@
 # lms
 Library Management System
 
-Java: 1.8
-Spring boot: 2.2.6_RELEASE
-Junit: 4 
-Swagger: 2
-Endpoint: [[local](http://localhost:8077/swagger-ui.html#/)](http://localhost:8077/swagger-ui.html)
-DB Schema name: lms
+- Java: 1.8
+- Spring boot: 2.2.6_RELEASE
+- Junit: 4 
+- Swagger: 2
+- Endpoint: [[local](http://localhost:8077/swagger-ui.html#/)](http://localhost:8077/swagger-ui.html)
+- DB Schema name: lms
 
 The application is service the purpose for the RESTful api expose with swagger documatation. The image of swagger ui is attached below. There are mainly 3 controller books(for book management), users(for user management), booksIssue(for issue management and book availability management). 
 
